@@ -51,8 +51,12 @@ static Symbol *DEREF = [[Symbol alloc] initWithNamespace:@"clojure.core"
 static Keyword *UNKNOWN =
     [[Keyword alloc] initWithName:[[Symbol alloc] initWithName:@"unknown"]];
 
-static unichar macros[256];
-static unichar dispatchMacros[256];
+static id macros[256];
+static id dispatchMacros[256];
+
+static id (^string_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
+  return nil;
+};
 
 static id (^comment_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
   return nil;
@@ -120,6 +124,10 @@ static id (^set_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
   return nil;
 };
 
+static id (^regex_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
+  return nil;
+};
+
 static id (^unmatched_delimiter_reader)(PushbackReader *rdr) =
     ^id (PushbackReader *rdr) {
   return nil;
@@ -135,31 +143,32 @@ static id (^ctor_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
 };
 
 static void init_reader_macros () {
-  macros['"'] = YES;
-  macros[';'] = YES;
-  macros['\''] = YES;
-  macros['@'] = YES;
-  macros['^'] = YES;
-  macros['`'] = YES;
-  macros['~'] = YES;
-  macros['('] = YES;
-  macros[')'] = YES;
-  macros['['] = YES;
-  macros[']'] = YES;
-  macros['{'] = YES;
-  macros['}'] = YES;
-  macros['\\'] = YES;
-  macros['%'] = YES;
-  macros['#'] = YES;
+  macros['"'] = string_reader;
+  macros[';'] = comment_reader;
+  macros['\''] = wrapping_reader;
+  macros['@'] = wrapping_reader;
+  macros['^'] = meta_reader;
+  macros['`'] = syntax_quote_reader;
+  macros['~'] = unquote_reader;
+  macros['('] = list_reader;
+  macros[')'] = unmatched_delimiter_reader;
+  macros['['] = vector_reader;
+  macros[']'] = unmatched_delimiter_reader;
+  macros['{'] = map_reader;
+  macros['}'] = unmatched_delimiter_reader;
+  macros['\\'] = char_reader;
+  macros['%'] = arg_reader;
+  macros['#'] = dispatch_reader;
 
-  dispatchMacros['"'] = YES;
-  dispatchMacros['\''] = YES;
-  dispatchMacros['^'] = YES;
-  dispatchMacros['('] = YES;
-  dispatchMacros['{'] = YES;
-  dispatchMacros['='] = YES;
-  dispatchMacros['!'] = YES;
-  dispatchMacros['_'] = YES;  
+  dispatchMacros['^'] = meta_reader;
+  dispatchMacros['\''] = var_reader;
+  dispatchMacros['"'] = regex_reader;    
+  dispatchMacros['('] = fn_reader;
+  dispatchMacros['{'] = set_reader;
+  dispatchMacros['='] = eval_reader;
+  dispatchMacros['!'] = comment_reader;
+  dispatchMacros['<'] = unreadable_reader;
+  dispatchMacros['_'] = discard_reader;
 }
 
 static BOOL isMacro (unichar ch) {

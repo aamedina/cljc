@@ -293,14 +293,7 @@ static id readMacro (PushbackReader *rdr, unichar init) {
       NSArray *arr = readDelimitedList('}', rdr, YES);
       if ([arr count] == 0)
         return [NSDictionary dictionary];
-      if (([arr count] % 2) != 0)
-        @throw @"Must initialize a map with an even number of elements";
-      NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-      for(int i=0;i<arr.count;i+=2){
-        [dict setObject:[arr objectAtIndex:i+1]
-                 forKey:[arr objectAtIndex:i]];
-      }
-      return dict;
+      return [NSDictionary create:arr];
     }
     case '}':
       @throw @"Unmatched delimiter error";

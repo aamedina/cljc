@@ -3,9 +3,17 @@
 
 @interface NSSet (ACollection) <ICollection, ICounted, ISeqable, ILookup, ISet,
                                   ISeq, Object>
++ (instancetype)EMPTY;
++ (instancetype)create:(NSArray *)arr;
 @end
 
 @implementation NSSet (ACollection)
++ (instancetype)EMPTY {
+  return [NSSet set];
+}
++ (instancetype)create:(NSArray *)arr {
+  return [NSSet setWithArray:arr];
+}
 - (NSString *)toString {
   if ([self count] == 0)
     return @"#{}";

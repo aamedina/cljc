@@ -23,9 +23,23 @@
 
 @interface NSDictionary (ACollection) <ICollection, ISeqable, ISeq, ILookup,
                                          IAssociative, IMap, ICounted, Object>
++ (instancetype)EMPTY;
++ (instancetype)create:(NSArray *)arr;
 @end
 
 @implementation NSDictionary (ACollection)
++ (instancetype)EMPTY {
+  return [NSDictionary dictionary];
+}
++ (instancetype)create:(NSArray *)arr {
+  if (([arr count] % 2) != 0)
+    @throw @"Must initialize a map with an even number of elements";
+  NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+  for(int i=0; i<arr.count; i+=2) {
+    [dict setObject:[arr objectAtIndex:i+1] forKey:[arr objectAtIndex:i]];
+  }
+  return [NSDictionary dictionaryWithDictionary:dict];
+}
 - (NSString *)toString {
   if ([self count] == 0)
     return @"{}";
