@@ -8,8 +8,6 @@
 @end
 
 @implementation Keyword
-@synthesize ns = _ns;
-@synthesize name = _name;
 - (instancetype)initWithName:(Symbol *)name {
   self = [super init];
   if (self)
