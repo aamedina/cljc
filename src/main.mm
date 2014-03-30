@@ -14,7 +14,8 @@ int main (int argc, const char *argv[]) {
       line = readline("=> ");
       if (line && *line) {
         add_history(line);
-        fprintf(stdout, "%s\n", [[readString(line) toString] UTF8String]);
+        id ret = readString(line);
+        fprintf(stdout, "%s\n", [[ret toString] UTF8String]);
       }
     }
     exit(0);

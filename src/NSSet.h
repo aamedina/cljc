@@ -9,11 +9,15 @@
 - (NSString *)toString {
   if ([self count] == 0)
     return @"#{}";
-  else if ([self count] == 1)
-    return [NSString stringWithFormat:@"#{%@}", [[self _seq] _first]];
-  else
-    return [NSString stringWithFormat:@"#{%@}",
-                     [[self _seq] componentsJoinedByString:@" "]];
+  NSMutableArray *arr = [NSMutableArray array];
+  for (id obj in [self _seq]) {
+    if ([obj respondsToSelector:@selector(toString)])
+      [arr addObject:[obj toString]];
+    else
+      [arr addObject:obj];    
+  }
+  return [NSString stringWithFormat:@"#{%@}",
+                   [arr componentsJoinedByString:@" "]];
 }
 - (id)_first {
   return [[self _seq] _first];

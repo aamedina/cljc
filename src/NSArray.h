@@ -9,8 +9,8 @@
 - (NSString *)toString {
   if ([self count] == 0)
     return @"[]";
-  else if ([self count] == 1)
-    return [NSString stringWithFormat:@"[%@]", [self _first]];
+  if ([self count] == 1)
+    return [NSString stringWithFormat:@"[%@]", [[self _first] toString]];
   NSMutableArray *objects = [NSMutableArray array];
   for (id obj in self) {
     if ([obj respondsToSelector:@selector(toString)])      

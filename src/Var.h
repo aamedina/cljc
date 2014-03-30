@@ -22,6 +22,6 @@
   return self;
 }
 - (NSString *)toString {
-  return [NSString stringWithFormat:@"%@/%@", _ns, _name];
+  return [NSString stringWithFormat:@"#'%@/%@", _ns, _name];
 }
 @end

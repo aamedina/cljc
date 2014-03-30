@@ -152,3 +152,15 @@ static const NSNull *NIL = [NSNull null];
   return [NSString stringWithFormat:@"#\"%@\"", [self pattern]];
 }
 @end
+
+@interface NSObject (Printable) <Object>
+@end
+
+@implementation NSObject (Printable)
+- (NSString *)toString {
+  if ([[[self class] description] isEqual:@"__NSGlobalBlock__"])    
+    return [NSString stringWithFormat:@"#%@", [self description]];
+  else
+    return [self description];
+}
+@end

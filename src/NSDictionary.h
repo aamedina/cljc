@@ -29,10 +29,6 @@
 - (NSString *)toString {
   if ([self count] == 0)
     return @"{}";
-  else if ([self count] == 1)
-    return [NSString stringWithFormat:@"{%@ %@}",
-                     [[self _first] _key],
-                     [[self _first] _val]];
   NSMutableArray *arr = [NSMutableArray array];
   for (id key in self) {
     id val = [self _lookup:key];

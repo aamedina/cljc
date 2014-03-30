@@ -5,6 +5,7 @@
 #import <llvm/ADT/APSInt.h>
 #import <llvm/ADT/APFloat.h>
 #import "protocols.h"
+#import "RT.h"
 #import "NSArray.h"
 #import "Cons.h"
 #import "NSDictionary.h"
@@ -160,7 +161,7 @@ static NSString *readToken (PushbackReader *rdr, unichar ch) {
     ch = [rdr read];
     if (!ch) return str;
     if (isspace(ch) || ch == ',' || isTerminatingMacro(ch)) {
-      [rdr unread:ch];
+      [rdr unread:ch];      
       return str;
     }
     [str appendFormat:@"%C", ch];
@@ -333,9 +334,18 @@ static id readMacro (PushbackReader *rdr, unichar init) {
     case ']':
       @throw @"Unmatched delimiter error";
     case '{': {
-      NSArray *lst = readDelimitedList('}', rdr, YES);
-      return lst;
-    }      
+      NSArray *arr = readDelimitedList('}', rdr, YES);
+      if ([arr count] == 0)
+        return [NSDictionary dictionary];
+      if (([arr count] % 2) != 0)
+        @throw @"Must initialize a map with an even number of elements";
+      NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+      for(int i=0;i<arr.count;i+=2){
+        [dict setObject:[arr objectAtIndex:i+1]
+                 forKey:[arr objectAtIndex:i]];
+      }
+      return dict;
+    }
     case '}':
       @throw @"Unmatched delimiter error";
     case '#':
@@ -357,10 +367,13 @@ static id readMacro (PushbackReader *rdr, unichar init) {
                                                              error:&err];
         }
         case '(':
-          return @"#()";
+          return createFunction();
         case '{': {
-          NSArray *lst = readDelimitedList('}', rdr, true);
-          return lst;
+          NSArray *arr = readDelimitedList('}', rdr, true);
+          if ([arr count] == 0)
+            return [NSSet set];
+          else
+            return [NSSet setWithArray:arr];
         }
         case '_':
           return NIL;
