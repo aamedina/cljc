@@ -341,8 +341,6 @@ static id readMacro (PushbackReader *rdr, unichar init) {
     case '#':
       ch = [rdr read];
       switch (ch) {
-        case '^':
-          return @"#^";
         case '\'':
           return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:VAR];
         case '"': {
@@ -354,10 +352,9 @@ static id readMacro (PushbackReader *rdr, unichar init) {
           }
           NSString *s = [NSRegularExpression escapedTemplateForString:str];
           NSError *err = NULL;
-          return [NSRegularExpression
-                   regularExpressionWithPattern:s
-                                        options:NSRegularExpressionAnchorsMatchLines
-                                          error:&err];
+          return [NSRegularExpression regularExpressionWithPattern:s
+                                                           options:1<<4
+                                                             error:&err];
         }
         case '(':
           return @"#()";
@@ -378,18 +375,17 @@ static id readMacro (PushbackReader *rdr, unichar init) {
 static NSMutableArray *readDelimitedList(unichar delim, PushbackReader *rdr,
                                          BOOL isRecursive) {
   NSMutableArray *arr = [NSMutableArray array];
-  for (;;) {
-    unichar ch = [rdr read];
-    while (isspace(ch) || ch == ',')
-      ch = [rdr read];
-    if (!ch) @throw @"EOF while reading";    
-    if (ch == delim) break;    
-    if (isMacro(ch))
-      [arr addObject:readMacro(rdr, ch)];
-    else {
-      [rdr unread:ch];
-      [arr addObject:read(rdr, YES, nil, isRecursive)];      
-    }    
+  unichar ch = [rdr read];
+  while (ch && ch != delim) {
+    if (!isspace(ch) || ch != ',') {
+      if (isMacro(ch)) {
+        [arr addObject:readMacro(rdr, ch)];
+      } else {
+        [rdr unread:ch];
+        [arr addObject:read(rdr, YES, nil, isRecursive)];      
+      }     
+    }
+    ch = [rdr read];
   }
   return arr;
 }
