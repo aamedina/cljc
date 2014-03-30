@@ -1,12 +1,19 @@
 #import <Foundation/Foundation.h>
 #import <llvm/ADT/APInt.h>
+#import <llvm/ADT/APSInt.h>
 #import <llvm/ADT/APFloat.h>
+#import <llvm/ADT/StringExtras.h>
+#import <llvm/ADT/StringRef.h>
+#import <llvm/Support/MathExtras.h>
+#import <llvm/ADT/SmallVector.h>
 
 using namespace llvm;
 
 @interface BigInt : NSObject <Object>
 @property (nonatomic, readonly) int64_t lpart;
-@property (nonatomic, readonly) APInt bipart;
+@property (nonatomic, readonly) APSInt bipart;
++ (BigInt *)ZERO;
++ (BigInt *)ONE;
 + (BigInt *)valueOf:(int64_t)val;
 + (BigInt *)fromAPInt:(APInt)val;
 - (instancetype)initWithNumber:(int64_t)lpart;
@@ -21,6 +28,12 @@ using namespace llvm;
 @end
 
 @implementation BigInt
++ (BigInt *)ZERO {
+  return [[BigInt alloc] initWithNumber:0 withBipart:APInt()];
+}
++ (BigInt *)ONE {
+  return [[BigInt alloc] initWithNumber:1 withBipart:APInt()];
+}
 + (BigInt *)valueOf:(int64_t)val {
   return [[BigInt alloc] initWithNumber:val];
 }
@@ -105,7 +118,43 @@ using namespace llvm;
 }
 @end
 
-static const BigInt *_ZERO = [[BigInt alloc] initWithNumber:0
-                                                 withBipart:APInt()];
-static const BigInt *_ONE = [[BigInt alloc] initWithNumber:0
-                                                withBipart:APInt()];
+// @interface BigFloat : NSObject <Object>
+// @property (nonatomic, readonly) APFloat bignum;
+// - (instancetype)initWithFloat:(float)f;
+// - (instancetype)initWithDouble:(double)d;
+// - (instancetype)initWithString:(NSString *)str;
+// @end
+
+// @implementation BigFloat
+// - (instancetype)initWithFloat:(float)f {
+//   self = [super init];
+//   if (self) {
+//     APFloat flt(f);
+//     _bignum = flt;
+//   }
+//   return self;
+// }
+// - (instancetype)initWithDouble:(double)d {
+//   self = [super init];
+//   if (self) {
+//     APFloat flt(d);
+//     _bignum = flt;
+//   }
+//   return self;
+// }
+// - (instancetype)initWithString:(NSString *)str {
+//   self = [super init];
+//   if (self) {
+//     StringRef n([str UTF8String]);
+//     APFloat flt(APFloat::IEEEdouble, n);
+//     _bignum = flt;
+//   }
+//   return self;
+// }
+// - (NSString *)toString {
+//   SmallVectorImpl<char> str(1024);
+//   _bignum.toString(&str, 0, 1024);
+//   StringRef s(str);
+//   return @(s.str().c_str());
+// }
+// @end

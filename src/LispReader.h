@@ -2,6 +2,7 @@
 #import <llvm/ADT/StringRef.h>
 #import <llvm/ADT/Twine.h>
 #import <llvm/ADT/APInt.h>
+#import <llvm/ADT/APSInt.h>
 #import <llvm/ADT/APFloat.h>
 #import "protocols.h"
 #import "NSArray.h"
@@ -13,6 +14,8 @@
 #import "BigInt.h"
 #import "Symbol.h"
 #import "Keyword.h"
+#import <iostream>
+#import <string>
 
 using namespace llvm;
 
@@ -164,55 +167,113 @@ static NSString *readToken (PushbackReader *rdr, unichar ch) {
   }
 }
 
-static id readNumber (PushbackReader *rdr, unichar init) {
-  BOOL isIntegral = YES;
-  BOOL isNegative = NO;
-  BOOL isRational = NO;
-  NSMutableString *number = [NSMutableString string];
-  NSMutableString *numerator = [NSMutableString string];
-  NSMutableString *denominator = [NSMutableString string];
-  unichar ch = init;
-  for (;;) {
-    if (!ch) break;
-    if (isdigit(ch) || ch == '.' || ch == '/') {
-      if ((ch == '.' && !isIntegral) || (ch == '/' && isRational))
-        @throw @"malformed number";
-      if (ch == '.' && isIntegral)
-        isIntegral = NO;
-      if (ch == '/' && !isRational) {
-        isRational = YES;
-        [numerator appendString:number];
-      } else if (isRational) {
-        [denominator appendFormat:@"%C", ch];
-      } else {
-        [number appendFormat:@"%C", ch];
-      }
-      ch = [rdr read];
+static NSArray *regexWithResults(NSString *haystack,
+                                 NSString *pattern){
+  NSArray *arr = [NSArray array];
+  NSArray *arrTextCheckingResults;
+  NSError *err = NULL;
+  NSRegularExpression *regex =
+      [NSRegularExpression
+        regularExpressionWithPattern:pattern
+                             options:NSRegularExpressionAnchorsMatchLines
+                               error:&err];
+  NSMutableArray *arrMutable = [NSMutableArray array]; 
+  NSTextCheckingResult *match =
+      [regex firstMatchInString:haystack
+                        options:0
+                          range:NSMakeRange(0, [haystack length])];
+  for (int i = 1; i < match.numberOfRanges; i++) {
+    if ([match rangeAtIndex:i].location < [haystack length]) {
+      NSString *capture = [haystack substringWithRange:[match rangeAtIndex:i]];
+      [arrMutable addObject:capture];
     } else {
+      [arrMutable addObject:NIL];
+    }
+  }
+  arr = arrMutable;
+  return arr;
+}
+
+static id readString (const char *s);
+
+static NSString *intPat =
+    @"([-+]?)(?:(0)|([1-9][0-9]*)|0[xX]([0-9A-Fa-f]+)|0([0-7]+)|([1-9][0-9]?)[rR]([0-9A-Za-z]+)|0[0-9]+)(N)?";
+static NSString *floatPat = @"([-+]?[0-9]+(\\.[0-9]*)?([eE][-+]?[0-9]+)?)(M)?";
+static NSString *ratioPat = @"([-+]?[0-9]+)/([0-9]+)";
+
+static id matchNumber (NSMutableString *str) {  
+  NSArray *groups =
+      regexWithResults([NSString stringWithString:str], ratioPat);
+  if ([groups count] == 2) {
+    StringRef numerator([groups[0] UTF8String]);
+    if (numerator.front() == '+')
+      numerator = numerator.drop_front();
+    StringRef denominator([groups[1] UTF8String]);
+    unsigned bitsNeeded = APInt::getBitsNeeded(numerator, 10) + 1;
+    unsigned bitsNeededDenom = APInt::getBitsNeeded(denominator, 10) + 1;
+    APInt uapnum(bitsNeeded, numerator, 10);
+    APSInt apnum(uapnum);    
+    APInt uapdenom(bitsNeededDenom, denominator, 10);
+    APSInt apdenom(uapdenom);
+    BigInt *bign = [BigInt fromAPInt:apnum];
+    BigInt *bigd = [BigInt fromAPInt:apdenom];
+    return [[Ratio alloc]initWithNumerator:apnum andDenominator:apdenom];      
+  }
+  groups = regexWithResults([NSString stringWithString:str], floatPat);
+  if (groups[1] != NIL) {
+    StringRef n([groups[0] UTF8String]);
+    return @(APFloat(APFloat::IEEEdouble, n).convertToDouble());
+  }
+  groups = regexWithResults([NSString stringWithString:str], intPat);
+  if ([groups count] == 8) {
+    if (groups[1] != NIL) {
+      if (groups[7] != NIL)
+        return [BigInt ZERO];
+      return @0;
+    }
+    bool negate = ([str characterAtIndex:0] == '-');
+    NSString *n;
+    int radix = 10;
+    if (groups[2] != NIL) {
+      n = groups[2];
+      radix = 10;
+    } else if (groups[3] != NIL) {
+      n = groups[3];
+      radix = 16;
+    } else if (groups[4] != NIL) {
+      n = groups[4];
+      radix = 8;
+    } else if (groups[6] != NIL) {
+      n = groups[6];
+      radix = stoi(std::string([groups[5] UTF8String]));
+    }
+    if (!n) return nil;
+    StringRef num([n UTF8String]);
+    unsigned bitsNeeded = APSInt::getBitsNeeded(num, radix) + 2;    
+    APInt ubignum(bitsNeeded, num, radix);
+    APSInt bignum(ubignum);
+    if (negate) bignum = -bignum;
+    if (groups[7] != NIL) return [BigInt fromAPInt:bignum];
+    else if (bitsNeeded < 64) return @(bignum.getSExtValue());
+    else return [BigInt fromAPInt:bignum];
+  }
+  return nil;
+}
+
+static id readNumber (PushbackReader *rdr, unichar init) {
+  NSMutableString *sb = [NSMutableString string];
+  [sb appendFormat:@"%C", init];
+  for (;;) {
+    unichar ch = [rdr read];
+    if (!ch || isspace(ch) || ch == ',' || isMacro(ch)) {
       [rdr unread:ch];
       break;
     }
+    [sb appendFormat:@"%C", ch];
   }
-  StringRef n([number UTF8String]);
-  if (isRational) {
-    StringRef num([numerator UTF8String]);
-    StringRef d([denominator UTF8String]);
-    unsigned bitsForNumerator = APInt::getBitsNeeded(num, 10) + 1;
-    unsigned bitsForDenominator = APInt::getBitsNeeded(d, 10) + 1;
-    return [[Ratio alloc] initWithNumerator:APInt(bitsForNumerator, num, 10)
-                             andDenominator:APInt(bitsForDenominator, d, 10)];
-  } else if (isIntegral) {
-    unsigned bitsNeeded = APInt::getBitsNeeded(n, 10) + 1;
-    APInt ap_int(bitsNeeded, n, 10);
-    if (bitsNeeded > 64) {
-      return [BigInt fromAPInt:ap_int];
-    } else {
-      return @(ap_int.getLimitedValue());
-    }
-  } else {
-    APFloat ap_float(APFloat::IEEEdouble, n);
-    return @(ap_float.convertToDouble());
-  }
+  id n = matchNumber(sb);
+  if (!n) @throw [NSString stringWithFormat:@"Invalid number: %@", sb];
+  return n;  
 }
 
 static id read (PushbackReader *rdr, BOOL eofIsError, id eofValue,
@@ -258,7 +319,7 @@ static id readMacro (PushbackReader *rdr, unichar init) {
       }      
     }      
     case '(': {
-      NSArray *arr = readDelimitedList(')', rdr, true);
+      NSArray *arr = readDelimitedList(')', rdr, YES);
       if ([arr count] == 0)
         return [Cons EMPTY];      
       return [Cons create:arr];
@@ -266,13 +327,13 @@ static id readMacro (PushbackReader *rdr, unichar init) {
     case ')':
       @throw @"Unmatched delimiter error";
     case '[': {
-      NSArray *lst = readDelimitedList(']', rdr, true);
+      NSArray *lst = readDelimitedList(']', rdr, YES);
       return lst;
     }      
     case ']':
       @throw @"Unmatched delimiter error";
     case '{': {
-      NSArray *lst = readDelimitedList('}', rdr, true);
+      NSArray *lst = readDelimitedList('}', rdr, YES);
       return lst;
     }      
     case '}':
@@ -292,9 +353,11 @@ static id readMacro (PushbackReader *rdr, unichar init) {
             ch = [rdr read];
           }
           NSString *s = [NSRegularExpression escapedTemplateForString:str];
-          return [NSRegularExpression regularExpressionWithPattern:s
-                                                           options:nil
-                                                             error:nil];
+          NSError *err = NULL;
+          return [NSRegularExpression
+                   regularExpressionWithPattern:s
+                                        options:NSRegularExpressionAnchorsMatchLines
+                                          error:&err];
         }
         case '(':
           return @"#()";
@@ -319,16 +382,13 @@ static NSMutableArray *readDelimitedList(unichar delim, PushbackReader *rdr,
     unichar ch = [rdr read];
     while (isspace(ch) || ch == ',')
       ch = [rdr read];
-    
-    if (!ch) @throw @"EOF while reading";
-    
-    if (ch == delim) break;
-    
+    if (!ch) @throw @"EOF while reading";    
+    if (ch == delim) break;    
     if (isMacro(ch))
       [arr addObject:readMacro(rdr, ch)];
     else {
       [rdr unread:ch];
-      [arr addObject:read(rdr, true, nil, isRecursive)];      
+      [arr addObject:read(rdr, YES, nil, isRecursive)];      
     }    
   }
   return arr;
