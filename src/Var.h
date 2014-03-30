@@ -1,5 +1,19 @@
 #import <Foundation/Foundation.h>
+#import <pthread.h>
+#import <llvm/Support/Threading.h>
+#import <llvm/Support/ThreadLocal.h>
+#import <llvm/Config/config.h>
+#import <llvm/Support/Atomic.h>
+#import <llvm/Support/Mutex.h>
 #import "protocols.h"
+
+@interface TBox : NSObject
+@property volatile id val;
+@property pthread_t thread;
+@end
+
+@interface Unbound <IFn>
+@end
 
 @interface Var : NSObject <Object>
 @property NSString *ns;

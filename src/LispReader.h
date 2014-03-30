@@ -5,6 +5,7 @@
 #import <llvm/ADT/APSInt.h>
 #import <llvm/ADT/APFloat.h>
 #import "protocols.h"
+#import "ReaderMacros.h"
 #import "RT.h"
 #import "NSArray.h"
 #import "Cons.h"
@@ -19,37 +20,6 @@
 #import <string>
 
 using namespace llvm;
-
-static Symbol *QUOTE = [[Symbol alloc] initWithName:@"quote"];
-static Symbol *VAR = [[Symbol alloc] initWithName:@"var"];
-static Symbol *SYNTAX_QUOTE = [[Symbol alloc] initWithName:@"syntax-quote"];
-static Symbol *UNQUOTE = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                   andName:@"unquote"];
-static Symbol *UNQUOTE_SPLICING =
-    [[Symbol alloc] initWithNamespace:@"clojure.core"
-                              andName:@"unquote-splicing"];
-static Symbol *CONCAT = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                  andName:@"concat"];
-static Symbol *SEQ = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                               andName:@"seq"];
-static Symbol *LIST = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                andName:@"list"];
-static Symbol *APPLY = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                 andName:@"apply"];
-static Symbol *HASHMAP = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                 andName:@"hash-map"];
-static Symbol *HASHSET = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                 andName:@"hash-set"];
-static Symbol *VECTOR = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                  andName:@"vector"];
-static Symbol *WITH_META = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                     andName:@"with-meta"];
-static Symbol *META = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                andName:@"meta"];
-static Symbol *DEREF = [[Symbol alloc] initWithNamespace:@"clojure.core"
-                                                 andName:@"deref"];
-static Keyword *UNKNOWN =
-    [[Keyword alloc] initWithName:[[Symbol alloc] initWithName:@"unknown"]];
 
 @protocol Reader <NSObject>
 - (unichar)read;
@@ -96,19 +66,6 @@ static Keyword *UNKNOWN =
 }
 @end
 
-static unichar macros[256] = {'"', ';', '\'', '@', '^', '`', '~', '(', ')',
-                              '[', ']', '{', '}', '\\', '%', '#'};
-
-static unichar dispatchMacros[256] = {'"', '\'', '^', '(', '{', '=', '!', '_'};
-
-static BOOL isMacro (unichar ch) {
-  return (ch < 256 && macros[ch]);
-}
-
-static BOOL isTerminatingMacro (unichar ch) {
-  return (ch != '#' && ch != '\'' && ch != '%' && isMacro(ch));
-}
-
 static id matchSymbol (NSString *s) {
   BOOL isKeyword = NO;
   if ([s characterAtIndex:0] == ':') {
@@ -154,14 +111,13 @@ static id interpretToken (NSString *s) {
   @throw [NSString stringWithFormat:@"Invalid token: %@", s];
 }
 
-static NSString *readToken (PushbackReader *rdr, unichar ch) {
+static NSString *readToken (PushbackReader *rdr, unichar init) {
   NSMutableString *str = [NSMutableString string];
-  [str appendFormat:@"%C", ch];
+  [str appendFormat:@"%C", init];
   for (;;) {
-    ch = [rdr read];
-    if (!ch) return str;
-    if (isspace(ch) || ch == ',' || isTerminatingMacro(ch)) {
-      [rdr unread:ch];      
+    unichar ch = [rdr read];
+    if (!ch || isspace(ch) || ch == ',' || isTerminatingMacro(ch)) {
+      [rdr unread:ch];
       return str;
     }
     [str appendFormat:@"%C", ch];
@@ -409,9 +365,8 @@ static id read (PushbackReader *rdr, BOOL eofIsError, id eofValue,
     for (;;) {
       unichar ch = [rdr read];
       while (isspace(ch) || ch == ',') ch = [rdr read];
-      if (isdigit(ch)) {
+      if (isdigit(ch))
         return readNumber(rdr, ch);
-      }
       id form = readMacro(rdr, ch);
       if (form) return form;
       if (ch == '+' || ch == '-') {
@@ -435,3 +390,4 @@ static id readString (const char *s) {
   NSString *str = [NSString stringWithUTF8String:s];
   return read([[PushbackReader alloc] initWithString:str], YES, nil, NO);
 }
+

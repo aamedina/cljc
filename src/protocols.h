@@ -164,3 +164,52 @@ static const NSNull *NIL = [NSNull null];
     return [self description];
 }
 @end
+
+@protocol IFn <NSObject>
+@optional
+- (id)invoke;
+- (id)invoke:(id)a;
+- (id)invoke:(id)a and:(id)b;
+- (id)invoke:(id)a and:(id)b and:(id)c;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p and:(id)q;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p and:(id)q and:(id)r;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s and:(id)t;
+- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
+         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
+         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s and:(id)t
+         and:(id<ISeq>)xs;
+- (id)applyTo:(id<ISeq>)arglist;
+@end
