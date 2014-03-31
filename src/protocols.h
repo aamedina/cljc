@@ -169,48 +169,48 @@ static const NSNull *NIL = [NSNull null];
 @optional
 - (id)invoke;
 - (id)invoke:(id)a;
-- (id)invoke:(id)a and:(id)b;
-- (id)invoke:(id)a and:(id)b and:(id)c;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p and:(id)q;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p and:(id)q and:(id)r;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s and:(id)t;
-- (id)invoke:(id)a and:(id)b and:(id)c and:(id)d and:(id)e and:(id)f and:(id)g
-         and:(id)h and:(id)i and:(id)j and:(id)k and:(id)l and:(id)m and:(id)n
-         and:(id)o and:(id)p and:(id)q and:(id)r and:(id)s and:(id)t
-         and:(id<ISeq>)xs;
+- (id)invoke:(id)a with:(id)b;
+- (id)invoke:(id)a with:(id)b with:(id)c;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p with:(id)q;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p with:(id)q with:(id)r;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p with:(id)q with:(id)r with:(id)s;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p with:(id)q with:(id)r with:(id)s with:(id)t;
+- (id)invoke:(id)a with:(id)b with:(id)c with:(id)d with:(id)e with:(id)f with:(id)g
+         with:(id)h with:(id)i with:(id)j with:(id)k with:(id)l with:(id)m with:(id)n
+         with:(id)o with:(id)p with:(id)q with:(id)r with:(id)s with:(id)t
+         with:(id<ISeq>)xs;
 - (id)applyTo:(id<ISeq>)arglist;
 @end
 
@@ -245,6 +245,10 @@ static const NSNull *NIL = [NSNull null];
 
 @protocol IPending <NSObject>
 - (bool)isRealized;
+@end
+
+@protocol IDeref <NSObject>
+- (id)deref;
 @end
 
 @protocol IWatchable <NSObject>
@@ -329,4 +333,21 @@ static const NSNull *NIL = [NSNull null];
 
 @protocol AFn <NSObject>
 - (void)throwArity:(NSValue *)n;
+@end
+
+@interface Reduced : NSObject <IDeref>
+@property id val;
+- (instancetype)initWithVal:(id)val;
+@end
+
+@implementation Reduced
+- (instancetype)initWithVal:(id)val {
+  self = [super init];
+  if (self)
+    _val = val;
+  return self;
+}
+- (id)deref {
+  return _val;
+}
 @end
