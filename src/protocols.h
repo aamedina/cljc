@@ -227,6 +227,11 @@ static const NSNull *NIL = [NSNull null];
 - (id)rseq;
 @end
 
+@protocol IReduce <NSObject>
+- (id)reduce:(id<IFn>)f;
+- (id)reduce:(id<IFn>)f withInit:(id)start;
+@end
+
 @protocol ISorted <NSObject>
 - (id)sortedSeq:(bool)ascending;
 - (id)sortedSeqFrom:(id)key isAscending:(bool)ascending;

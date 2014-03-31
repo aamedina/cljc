@@ -7,6 +7,7 @@
 #import "Var.h"
 #import "RT.h"
 #import "ArrayChunk.h"
+#import "ArraySeq.h"
 
 static const Symbol *CLOJURE_MAIN = [[Symbol alloc]
                                       initWithNamespace:@"clojure.main"
