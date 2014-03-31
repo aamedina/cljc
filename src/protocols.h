@@ -311,6 +311,17 @@ static const NSNull *NIL = [NSNull null];
 - (id)namespace;
 @end
 
+@protocol IProxy <NSObject>
+- (id)initClojureFnMappings:(id<IMap>)m;
+- (id)updateClojureFnMappings:(id<IMap>)m;
+- (id<IMap>)getClojureFnMappings;
+@end
+
+@protocol IReference <NSObject>
+- (id<IMap>)alterMeta:(id<IFn>)alter withArgs:(id<ISeq>)args;
+- (id<IMap>)resetMeta:(id<IMap>)m;
+@end
+
 @protocol IAtom <NSObject>
 @end
 
