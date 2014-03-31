@@ -8,16 +8,16 @@
 - (NSString *)toString {
   return [NSString stringWithFormat:@"\"%@\"", self];
 }
-- (id)_seq {
+- (id)seq {
   return [self componentsSeparatedByString:@""];
 }
-- (id)_first {
-  return [[self _seq] _first];
+- (id)first {
+  return [[self seq] first];
 }
-- (id)_rest {
-  return [[self _seq] _rest];
+- (id)rest {
+  return [[self seq] rest];
 }
-- (id)_cons:(NSString *)obj {
-  return [[self _seq] _cons:obj];
+- (id)cons:(NSString *)obj {
+  return [[self seq] cons:obj];
 }
 @end

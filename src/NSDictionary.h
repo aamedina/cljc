@@ -22,7 +22,7 @@
 @end
 
 @interface NSDictionary (ACollection) <ICollection, ISeqable, ISeq, ILookup,
-                                         IAssociative, IMap, ICounted, Object>
+                                         IAssociative, IMap, Object>
 + (instancetype)EMPTY;
 + (instancetype)create:(NSArray *)arr;
 @end
@@ -45,7 +45,7 @@
     return @"{}";
   NSMutableArray *arr = [NSMutableArray array];
   for (id key in self) {
-    id val = [self _lookup:key];
+    id val = [self lookup:key];
     if ([key respondsToSelector:@selector(toString)])
       [arr addObject:[key toString]];
     else
@@ -58,56 +58,53 @@
   return [NSString stringWithFormat:@"{%@}",
                    [arr componentsJoinedByString:@" "]];
 }
-- (int)_count {
-  return [self count];
+- (id)conj:(id<IMapEntry>)mapEntry {
+  return [self assoc:[mapEntry key] withVal:[mapEntry val]];
 }
-- (id)_conj:(id<IMapEntry>)map_entry {
-  return [self _assoc:[map_entry _key] withVal:[map_entry _val]];
+- (id)first {
+  return [[self seq] first];
 }
-- (id)_first {
-  return [[self _seq] _first];
+- (id)rest {
+  return [[self seq] rest];
 }
-- (id)_rest {
-  return [[self _seq] _rest];
+- (id)cons:(id)obj {
+  return [[self seq] cons:obj];
 }
-- (id)_cons:(id)obj {
-  return [[self _seq] _cons:obj];
-}
-- (id)_seq {
+- (id)seq {
   if ([self count] == 0)
     return [NSNull null];
   else {
     NSMutableArray *arr = [NSMutableArray array];
-    for(id key in self) {
+    for (id key in self) {
       id val = [self objectForKey:key];
       [arr addObject:[[MapEntry alloc] initWithKey:key andVal:val]];
     }
     return arr;
   }  
 }
-- (id)_lookup:(id)key {
-  return [self _lookup:key default:[NSNull null]];
+- (id)lookup:(id)key {
+  return [self lookup:key default:[NSNull null]];
 }
-- (id)_lookup:(id)key default:(id)not_found {
+- (id)lookup:(id)key default:(id)notFound {
   id val = [self objectForKey:key];
   if (val)
     return val;
   else
-    return not_found;
+    return notFound;
 }
-- (NSNumber *)_contains_key:(id)key {
+- (NSNumber *)containsKey:(id)key {
   if ([self objectForKey:key])
     return @(YES);
   else
     return @(NO);
 }
-- (id)_assoc:(id<NSCopying>)key withVal:(id)val {
+- (id)assoc:(id<NSCopying>)key withVal:(id)val {
   NSMutableDictionary *dict =
       [NSMutableDictionary dictionaryWithDictionary:self];
   [dict setObject:val forKey:key];
   return dict;
 }
-- (id)_dissoc:(id)key {
+- (id)dissoc:(id)key {
   NSMutableDictionary *dict =
       [NSMutableDictionary dictionaryWithDictionary:self];
   [dict removeObjectForKey:key];

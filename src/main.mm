@@ -7,11 +7,13 @@
 #import "Var.h"
 #import "RT.h"
 
+using namespace RT;
+
 static const Symbol *CLOJURE_MAIN = [[Symbol alloc]
                                       initWithNamespace:@"clojure.main"
                                                 andName:nil];
-static const Var *REQUIRE = RT::var(@"clojure.core", @"require");
-static const Var *MAIN = RT::var(@"clojure.main", @"main");
+static const Var *REQUIRE = var(@"clojure.core", @"require");
+static const Var *MAIN = var(@"clojure.main", @"main");
 
 int main (int argc, const char *argv[]) {
   llvm_start_multithreaded();
@@ -26,8 +28,12 @@ int main (int argc, const char *argv[]) {
       line = readline("=> ");
       if (line && *line) {
         add_history(line);
-        id ret = readString(line);
-        fprintf(stdout, "%s\n", [[ret toString] UTF8String]);
+        @try {
+          id ret = readString(line);
+          fprintf(stdout, "%s\n", [[ret toString] UTF8String]);
+        } @catch (NSString *err) {
+          NSLog(@"%@", err);
+        }
       }
     }
     exit(0);

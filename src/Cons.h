@@ -1,10 +1,12 @@
 #import <Foundation/Foundation.h>
 #import "protocols.h"
 
+@class Cons;
+
 @interface Cons : NSObject <ICollection, ISeqable, ISeq, ICounted, Object,
                               INext, IEquiv, NSFastEnumeration>
-@property (nonatomic, readonly) id first;
-@property (nonatomic, readonly) id<ISeq> rest;
+@property (nonatomic, readonly) id _first;
+@property (nonatomic, readonly) Cons *_rest;
 + (instancetype)EMPTY;
 + (instancetype)create:(NSArray *)arr;
 - (instancetype)initWithFirst:(id)first;
@@ -18,7 +20,7 @@
 + (instancetype)create:(NSArray *)arr {
   Cons *ret = [Cons EMPTY];
   for(id obj in [arr reverseObjectEnumerator]) {
-    ret = [ret _cons:obj];
+    ret = [ret cons:obj];
   }
   return ret;
 }
@@ -34,8 +36,8 @@
     id last_obj;
     while ((countOfItemsAlreadyEnumerated < cnt) &&
            (count < stackbufLength)) {
-      last_obj = [lst _first];
-      lst = [lst _rest];
+      last_obj = [lst first];
+      lst = [lst rest];
       stackbuf[count] = last_obj;
       countOfItemsAlreadyEnumerated++;
       count++;
@@ -50,20 +52,20 @@
 - (instancetype)initWithFirst:(id)first {
   self = [super init];
   if (self)
-    _first = first;
+    __first = first;
   return self;
 }
-- (instancetype)initWithFirst:(id)first andRest:(id<ISeq>)rest {
+- (instancetype)initWithFirst:(id)first andRest:(id)rest {
   self = [self initWithFirst:first];
   if (self)
-    _rest = rest;
+    __rest = rest;
   return self;
 }
 - (NSString *)toString {
-  if (![self _first])
+  if (![self first])
     return @"()";
-  else if ([self _first] && ![self _rest])
-    return [NSString stringWithFormat:@"(%@)", [self _first]];
+  else if ([self first] && ![self rest])
+    return [NSString stringWithFormat:@"(%@)", [self first]];
   NSMutableArray *objects = [NSMutableArray array];
   for (id obj in self) {
     if ([obj respondsToSelector:@selector(toString)])      
@@ -75,24 +77,26 @@
                    [objects componentsJoinedByString:@" "]];
 }
 - (int)_count {
-  if ([self _first]) {
-    return 1 + [[self _rest] _count];
+  if (self._first) {
+    return 1 + [self._rest _count];
   }
   return 0;
 }
-- (id)_conj:(id)val {
-  return [self _cons:val];
+- (id)conj:(id)val {
+  return [self cons:val];
 }
-- (id)_first {
-  return _first;
+- (id)first {
+  return __first;
 }
-- (id)_rest {
-  return _rest;
+- (id)rest {
+  return __rest;
 }
-- (id)_next {
-  return _rest;
+- (id)next {
+  if ([__rest _count] > 0)
+    return __rest;
+  return NIL;
 }
-- (BOOLEAN)_equiv:(id)other {
+- (BOOLEAN)equiv:(id)other {
   if (other == self)
     return T;
   int i = 0;
@@ -106,11 +110,11 @@
   }
   return T;
 }
-- (id)_cons:(id)obj {
+- (id)cons:(id)obj {
   return [[Cons alloc] initWithFirst:obj andRest:self];
 }
-- (id)_seq {
-  if (_first)
+- (id)seq {
+  if (__first)
     return self;
   else
     return [NSNull null];

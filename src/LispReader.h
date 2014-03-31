@@ -66,6 +66,15 @@ using namespace llvm;
 }
 @end
 
+@interface LineNumberingPushbackReader : PushbackReader
+@property BOOL atLineStart;
+@property BOOL prev;
+@property int columnNumber;
+@end
+
+@implementation LineNumberingPushbackReader
+@end
+
 static id matchSymbol (NSString *s) {
   BOOL isKeyword = NO;
   if ([s characterAtIndex:0] == ':') {
@@ -258,21 +267,21 @@ static id readMacro (PushbackReader *rdr, unichar init) {
       return [NSString stringWithFormat:@"%C", ch];
     }
     case '\'':
-      return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:QUOTE];
+      return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:QUOTE];
     case '@':
-      return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:DEREF];
+      return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:DEREF];
     case '^':
-      return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:WITH_META];
+      return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:WITH_META];
     case '`':
-      return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:SYNTAX_QUOTE];
+      return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:SYNTAX_QUOTE];
     case '~': {
       ch = [rdr read];
       if (ch == '@') {
-        return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)]
-                 _cons:UNQUOTE_SPLICING];
+        return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)]
+                 cons:UNQUOTE_SPLICING];
       } else {
         [rdr unread:ch];
-        return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:UNQUOTE];
+        return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:UNQUOTE];
       }      
     }      
     case '(': {
@@ -301,7 +310,7 @@ static id readMacro (PushbackReader *rdr, unichar init) {
       ch = [rdr read];
       switch (ch) {
         case '\'':
-          return [[[Cons EMPTY] _cons:read(rdr, YES, nil, NO)] _cons:VAR];
+          return [[[Cons EMPTY] cons:read(rdr, YES, nil, NO)] cons:VAR];
         case '"': {
           NSMutableString *str = [NSMutableString string];
           ch = [rdr read];

@@ -104,11 +104,13 @@ static id (^char_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
   return nil;
 };
 
-static id (^list_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
+static id (^list_reader)(PushbackReader *rdr, id leftparen) =
+    ^id (PushbackReader *rdr, id leftparen) {
   return nil;
 };
 
-static id (^eval_reader)(PushbackReader *rdr) = ^id (PushbackReader *rdr) {
+static id (^eval_reader)(PushbackReader *rdr, id eq) =
+    ^id (PushbackReader *rdr, id eq) {
   return nil;
 };
 
@@ -171,6 +173,12 @@ static void init_reader_macros () {
   dispatchMacros['_'] = discard_reader;
 }
 
+static id getMacro (unichar ch) {
+  if (ch < 256)
+    return macros[ch];
+  return nil;
+}
+
 static BOOL isMacro (unichar ch) {
   return (ch < 256 && macros[ch]);
 }
@@ -178,4 +186,3 @@ static BOOL isMacro (unichar ch) {
 static BOOL isTerminatingMacro (unichar ch) {
   return (ch != '#' && ch != '\'' && ch != '%' && isMacro(ch));
 }
-
