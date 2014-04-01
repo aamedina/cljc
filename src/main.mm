@@ -8,6 +8,7 @@
 #import "RT.h"
 #import "ArrayChunk.h"
 #import "ArraySeq.h"
+#import "ChunkBuffer.h"
 
 static const Symbol *CLOJURE_MAIN = [[Symbol alloc]
                                       initWithNamespace:@"clojure.main"

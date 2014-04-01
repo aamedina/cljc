@@ -367,3 +367,21 @@ static const NSNull *NIL = [NSNull null];
   return _val;
 }
 @end
+
+@interface Box : NSObject
+@property id val;
++ (instancetype)withVal:(id)val;
+- (instancetype)initWithVal:(id)val;
+@end
+
+@implementation Box
++ (instancetype)withVal:(id)val {
+  return [[Box alloc] initWithVal:val];
+}
+- (instancetype)initWithVal:(id)val {
+  self = [super init];
+  if (self)
+    self.val = val;
+  return self;
+}
+@end
