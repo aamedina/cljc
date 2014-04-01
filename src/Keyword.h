@@ -2,6 +2,8 @@
 #import "Symbol.h"
 #import "protocols.h"
 
+@class Keyword;
+
 @interface Keyword : NSObject <Object>
 @property Symbol *ns;
 @property Symbol *name;
