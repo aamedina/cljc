@@ -1,8 +1,15 @@
 #import <Foundation/Foundation.h>
 #import "Symbol.h"
 #import "protocols.h"
+#import <tbb/concurrent_hash_map.h>
+#import <city.h>
+
+using namespace tbb;
+using namespace std;
 
 @class Keyword;
+
+// static concurrent_hash_map<Symbol*, Keyword*> table;
 
 @interface Keyword : NSObject <Object>
 @property Symbol *ns;
@@ -33,4 +40,3 @@
                    [_name toString]];
 }
 @end
-

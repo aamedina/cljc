@@ -7,7 +7,7 @@ RPATH= /usr/local/opt/llvm/lib
 
 CPPFLAGS = `$(LLVM_BINARY_PATH)/llvm-config --cxxflags` -fobjc-arc -std=c++11 -stdlib=libc++ -fobjc-call-cxx-cdtors
 LDFLAGS = `$(LLVM_BINARY_PATH)/llvm-config --ldflags` -stdlib=libc++ -rpath $(RPATH)
-LIBS = `$(LLVM_BINARY_PATH)/llvm-config --libs` -ledit -lcityhash $(FRAMEWORKS) -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangCodeGen -lclangDriver -lclangDynamicASTMatchers -lclangEdit -lclangFormat -lclangFrontend -lclangFrontendTool -lclangIndex -lclangLex -lclangParse -lclangRewriteCore -lclangRewriteFrontend -lclangSema -lclangSerialization -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangStaticAnalyzerFrontend -lclangTooling
+LIBS = `$(LLVM_BINARY_PATH)/llvm-config --libs` -ledit -lcityhash $(FRAMEWORKS) -lclangAST -lclangASTMatchers -lclangAnalysis -lclangBasic -lclangCodeGen -lclangDriver -lclangDynamicASTMatchers -lclangEdit -lclangFormat -lclangFrontend -lclangFrontendTool -lclangIndex -lclangLex -lclangParse -lclangRewriteCore -lclangRewriteFrontend -lclangSema -lclangSerialization -lclangStaticAnalyzerCheckers -lclangStaticAnalyzerCore -lclangStaticAnalyzerFrontend -lclangTooling -ltbb -ltbbmalloc
 
 all:
 	$(CC) $(CPPFLAGS) -o clojure.o -c src/main.mm 
