@@ -6,6 +6,8 @@
 @property id __strong *buffer;
 @property int end;
 - (instancetype)initWithCapacity:(int)capacity;
+- (id<IChunk>)chunk;
+- (void)add:(id)obj;
 @end
 
 @implementation ChunkBuffer
@@ -17,6 +19,17 @@
   return self;
 }
 - (int)_count {
-  return 0;
+  return _end;
+}
+- (id<IChunk>)chunk {
+  ArrayChunk *ret = [[ArrayChunk alloc] initWithArray:self.buffer
+                                               andOff:0
+                                               andEnd:self.end];
+  self.buffer = nil;
+  return ret;
+}
+- (void)add:(id)obj {
+  self.buffer[self.end++] = obj;
 }
 @end
+
