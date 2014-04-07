@@ -9,9 +9,9 @@ using namespace std;
 
 @class Keyword;
 
-// static concurrent_hash_map<Symbol*, Keyword*> table;
+static concurrent_hash_map<Symbol*, Keyword*> table;
 
-@interface Keyword : NSObject <Object>
+@interface Keyword : NSObject
 @property Symbol *ns;
 @property Symbol *name;
 @end
@@ -31,12 +31,9 @@ using namespace std;
   }
   return self;
 }
-- (NSString *)toString {
+- (NSString *)description {
   if (_ns && _name)
-    return [NSString stringWithFormat:@":%@/%@",
-                     [_ns toString],
-                     [_name toString]];
-  return [NSString stringWithFormat:@":%@",
-                   [_name toString]];
+    return [NSString stringWithFormat:@":%@/%@", _ns, _name];
+  return [NSString stringWithFormat:@":%@", _name];
 }
 @end

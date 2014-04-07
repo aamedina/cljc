@@ -11,9 +11,6 @@
 #import "ArraySeq.h"
 #import "ChunkBuffer.h"
 
-using namespace tbb;
-using namespace std;
-
 static const Symbol *CLOJURE_MAIN = [[Symbol alloc]
                                       initWithNamespace:@"clojure.main"
                                                 andName:nil];
@@ -33,7 +30,8 @@ int main (int argc, const char *argv[]) {
       if (line && *line) {
         add_history(line);
         id ret = readString(line);
-        fprintf(stdout, "%s\n", [[ret toString] UTF8String]);
+        if (ret || [ret isKindOfClass:NSNull.class])          
+          fprintf(stdout, "%s\n", [[ret description] UTF8String]);
       }
     }
     exit(0);

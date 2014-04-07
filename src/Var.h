@@ -49,7 +49,7 @@
 @implementation Frame
 @end
 
-@interface Var : NSObject <Object>
+@interface Var : NSObject
 @property NSString *ns;
 @property NSString *name;
 @end
@@ -69,7 +69,7 @@
   }
   return self;
 }
-- (NSString *)toString {
+- (NSString *)description {
   return [NSString stringWithFormat:@"#'%@/%@", _ns, _name];
 }
 @end

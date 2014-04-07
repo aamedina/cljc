@@ -9,7 +9,7 @@
 
 using namespace llvm;
 
-@interface BigInt : NSObject <Object>
+@interface BigInt : NSObject
 @property (nonatomic, readonly) int64_t lpart;
 @property (nonatomic, readonly) APSInt bipart;
 + (BigInt *)ZERO;
@@ -98,7 +98,7 @@ using namespace llvm;
   }
   return [self toAPInt].ult([y toAPInt]);
 }
-- (NSString *)toString {
+- (NSString *)description {
   if (_bipart == 0)
     return [NSString stringWithFormat:@"%llu", _lpart];
   else

@@ -1,8 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "protocols.h"
 
-@interface NSSet (ACollection) <ICollection, ISeqable, ILookup, ISet, ISeq,
-                                  Object>
+@interface NSSet (ACollection) <ICollection, ISeqable, ILookup, ISet, ISeq>
 + (instancetype)EMPTY;
 + (instancetype)create:(NSArray *)arr;
 @end
@@ -14,15 +13,12 @@
 + (instancetype)create:(NSArray *)arr {
   return [NSSet setWithArray:arr];
 }
-- (NSString *)toString {
+- (NSString *)description {
   if ([self count] == 0)
     return @"#{}";
   NSMutableArray *arr = [NSMutableArray array];
   for (id obj in [self seq]) {
-    if ([obj respondsToSelector:@selector(toString)])
-      [arr addObject:[obj toString]];
-    else
-      [arr addObject:obj];    
+    [arr addObject:obj];
   }
   return [NSString stringWithFormat:@"#{%@}",
                    [arr componentsJoinedByString:@" "]];

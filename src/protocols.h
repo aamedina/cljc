@@ -1,9 +1,5 @@
 #import <Foundation/Foundation.h>
 
-@protocol Object <NSObject>
-- (NSString *)toString;
-@end
-
 @protocol ICounted <NSObject>
 - (int)_count;
 @end
@@ -67,7 +63,7 @@
 - (id<ICollection>)empty;
 @end
 
-@interface CLJBool : NSObject <Object>
+@interface CLJBool : NSObject
 @property (nonatomic, readonly) BOOL truth;
 + (instancetype)true;
 + (instancetype)false;
@@ -87,7 +83,7 @@
     _truth = truth;
   return self;
 }
-- (NSString *)toString {
+- (NSString *)description {
   return _truth ? @"true" : @"false";
 }
 @end
@@ -109,11 +105,11 @@ static const CLJBool *F = [CLJBool false];
 - (id)withMeta:(id<IMap>)meta;
 @end
 
-@interface NSNull (ASeq) <ISeq, ISeqable, Object, ICounted>
+@interface NSNull (ASeq) <ISeq, ISeqable, ICounted>
 @end
 
 @implementation NSNull (ASeq)
-- (NSString *)toString {
+- (NSString *)description {
   return @"nil";
 }
 - (id)seq {
@@ -135,33 +131,12 @@ static const CLJBool *F = [CLJBool false];
 
 static const NSNull *NIL = [NSNull null];
 
-@interface NSNumber (Printable) <Object>
-@end
-
-@implementation NSNumber (Printable)
-- (NSString *)toString {
-  return [self description];
-}
-@end
-
-@interface NSRegularExpression (Printable) <Object>
+@interface NSRegularExpression (Printable) 
 @end
 
 @implementation NSRegularExpression (Printable)
-- (NSString *)toString {
+- (NSString *)description {
   return [NSString stringWithFormat:@"#\"%@\"", [self pattern]];
-}
-@end
-
-@interface NSObject (Printable) <Object>
-@end
-
-@implementation NSObject (Printable)
-- (NSString *)toString {
-  if ([[[self class] description] isEqual:@"__NSGlobalBlock__"])    
-    return [NSString stringWithFormat:@"#%@", [self description]];
-  else
-    return [self description];
 }
 @end
 

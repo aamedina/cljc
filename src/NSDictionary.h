@@ -22,7 +22,7 @@
 @end
 
 @interface NSDictionary (ACollection) <ICollection, ISeqable, ISeq, ILookup,
-                                         IAssociative, IMap, Object>
+                                         IAssociative, IMap>
 + (instancetype)EMPTY;
 + (instancetype)create:(NSArray *)arr;
 @end
@@ -35,25 +35,18 @@
   if (([arr count] % 2) != 0)
     @throw @"Must initialize a map with an even number of elements";
   NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-  for(int i=0; i<arr.count; i+=2) {
+  for(int i=0; i<arr.count; i+=2)
     [dict setObject:[arr objectAtIndex:i+1] forKey:[arr objectAtIndex:i]];
-  }
   return [NSDictionary dictionaryWithDictionary:dict];
 }
-- (NSString *)toString {
+- (NSString *)description {
   if ([self count] == 0)
     return @"{}";
   NSMutableArray *arr = [NSMutableArray array];
   for (id key in self) {
     id val = [self lookup:key];
-    if ([key respondsToSelector:@selector(toString)])
-      [arr addObject:[key toString]];
-    else
-      [arr addObject:key];
-    if ([val respondsToSelector:@selector(toString)])
-      [arr addObject:[val toString]];
-    else
-      [arr addObject:val];   
+    [arr addObject:key];
+    [arr addObject:val];   
   }
   return [NSString stringWithFormat:@"{%@}",
                    [arr componentsJoinedByString:@" "]];

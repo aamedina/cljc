@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "protocols.h"
 
-@interface Symbol : NSObject <Object, IMeta, IWithMeta>
+@interface Symbol : NSObject <IMeta, IWithMeta>
 @property (nonatomic, readonly) NSString *ns;
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) id<IMap> _meta;
@@ -37,7 +37,7 @@
     __meta = meta; 
   return self;
 }
-- (NSString *)toString {
+- (NSString *)description {
   if (_ns && _name)
     return [NSString stringWithFormat:@"%@/%@", _ns, _name];
   return [NSString stringWithFormat:@"%@", _name];    

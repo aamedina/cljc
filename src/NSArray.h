@@ -1,20 +1,16 @@
 #import <Foundation/Foundation.h>
 #import "protocols.h"
 
-@interface NSArray (ACollection) <ICollection, ISeqable, ISeq, IMapEntry,
-                                    Object>
+@interface NSArray (ACollection) <ICollection, ISeqable, ISeq, IMapEntry>
 @end
 
 @implementation NSArray (ACollection)
-- (NSString *)toString {
+- (NSString *)description {
   if ([self count] == 0)
     return @"[]";
   NSMutableArray *objects = [NSMutableArray array];
   for (id obj in self) {
-    if ([obj respondsToSelector:@selector(toString)])      
-      [objects addObject:[obj toString]];
-    else
-      [objects addObject:obj];
+    [objects addObject:obj];
   }
   return [NSString stringWithFormat:@"[%@]",
                    [objects componentsJoinedByString:@" "]];

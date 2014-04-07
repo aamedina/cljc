@@ -1,11 +1,11 @@
 #import <Foundation/Foundation.h>
 #import "protocols.h"
 
-@interface NSString (ASeq) <ISeq, ISeqable, Object>
+@interface NSString (ASeq) <ISeq, ISeqable>
 @end
 
 @implementation NSString (ASeq)
-- (NSString *)toString {
+- (NSString *)description {
   return [NSString stringWithFormat:@"\"%@\"", self];
 }
 - (id)seq {

@@ -3,8 +3,8 @@
 
 @class Cons;
 
-@interface Cons : NSObject <ICollection, ISeqable, ISeq, ICounted, Object,
-                              INext, IEquiv, NSFastEnumeration>
+@interface Cons : NSObject <ICollection, ISeqable, ISeq, ICounted, INext,
+                              IEquiv, NSFastEnumeration>
 @property (nonatomic, readonly) id _first;
 @property (nonatomic, readonly) Cons *_rest;
 + (instancetype)EMPTY;
@@ -61,17 +61,14 @@
     __rest = rest;
   return self;
 }
-- (NSString *)toString {
+- (NSString *)description {
   if (![self first])
     return @"()";
   else if ([self first] && ![self rest])
     return [NSString stringWithFormat:@"(%@)", [self first]];
   NSMutableArray *objects = [NSMutableArray array];
   for (id obj in self) {
-    if ([obj respondsToSelector:@selector(toString)])      
-      [objects addObject:[obj toString]];
-    else
-      [objects addObject:obj];
+    [objects addObject:obj];
   }
   return [NSString stringWithFormat:@"(%@)",
                    [objects componentsJoinedByString:@" "]];
